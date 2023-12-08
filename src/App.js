@@ -1,13 +1,18 @@
+import React from 'react';
 import './App.css';
-import firebase from './firebase';
-import 'firebase/firestore';
-import 'firebase/auth';
+
+import { initializeApp } from 'firebase/app';
+import { getFirestore } from 'firebase/firestore';
+import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { useCollectionData } from 'react-firebase-hooks/firestore';
-import { useHistory } from 'react-router-dom';
+/*import { useCollectionData } from 'react-firebase-hooks/firestore';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';*/
 
-firebase.initializeApp({ 
+import Home from './pages/Home';
+import Landing from './pages/Landing';
+
+const firebaseConfig = ({ 
   apiKey: "AIzaSyA1qaLQXpTyabgrvBSEytzESHkfe4hT_cc",
   authDomain: "partfolio-project.firebaseapp.com",
   projectId: "partfolio-project",
@@ -16,57 +21,24 @@ firebase.initializeApp({
   appId: "1:1084826388216:web:fdd9a3136e7c7b7d7add0d",
   measurementId: "G-9GC5XVZTPZ"
 })
+const app = initializeApp(firebaseConfig);
 
-const auth = firebase.auth();
-const firestore = firebase.firestore();
+export const auth = getAuth(app);
+// const firestore = getFirestore(app);
 
 function App() {
-
-  const [user] = useAuthState(auth);
+  const [isAuth, setIsAuth] = useAuthState(auth);
 
   return (
     <div className="App">
-      <header className="App-header">
-        
-      </header>
-      {/* If user not logged in, show sign in prompt; otherwise show main page. */}
       <section>
-        {user ? <Main /> : <SignIn />}
+        {isAuth ? <Home /> : <Landing setIsAuth={setIsAuth}/>}
       </section>
     </div>
   );
 }
 
-function SignIn() {
-  // Sign in with Google
-  const signInWithGoogle = () => {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    auth.signInWithPopup(provider);
-  }
-
-  return (
-    <div>
-      <button onClick={signInWithGoogle}>Sign in with Google</button>
-    </div>
-  )
-}
-
-function SignOut() {
-  // Sign out
-  return auth.currentUser && (
-    <button onClick={() => auth.signOut()}>Sign Out</button>
-  )
-}
-
-function Main() {
-  const history = useHistory();
-
-  const goToMainPage = () => {
-    history.push('/main');
-  };
-
-  return (
-    goToMainPage()
-  );
-}
 export default App;
+
+export const db = getFirestore(app);
+export const provider = new GoogleAuthProvider();
