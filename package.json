@@ -10,7 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
     "@fortawesome/fontawesome-svg-core": "^6.5.1",
+    "@mui/icons-material": "^5.14.19",
+    "@mui/material": "^5.14.20",
     "@types/history": "^5.0.0",
     "@types/node": "^20.10.4",
     "@types/react-router-dom": "^5.3.3",
