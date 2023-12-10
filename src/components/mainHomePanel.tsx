@@ -1,12 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FaGoogle, FaTwitch, FaFacebook } from 'react-icons/fa';
 import { FaXTwitter } from "react-icons/fa6";
 import { useNavigate } from 'react-router-dom';
 import MainFooter from './mainFooter';
+import { signInWithRedirect } from 'firebase/auth';
+import { auth, provider } from '../firebase/config';
 
 
 const CenterPanel = () => {
   const navigate = useNavigate();
+  const [error, setError] = useState<string>('');
 
   const handleCreateAccount = () => {
     navigate('/Signup', { replace: true });
@@ -15,6 +18,15 @@ const CenterPanel = () => {
   const handleLogin = () => {
     navigate('/Login', { replace: true });
   };
+
+  const signInWithGoogle = async () => {
+    try {
+        await signInWithRedirect(auth, provider);
+        navigate('/Main');
+    } catch (error) {
+        setError(error.message)
+    }
+}
 
   return (
     <>
@@ -31,7 +43,7 @@ const CenterPanel = () => {
           <div className="social-signup">
             <p className='text-xs text-center my-4 mt-7'>Begin with an existing account</p>
             <div className='homeIcons container flex space-x-4 lg:mx-auto'>
-              <button className="text-2xl btn rounded-full border-0 bg-transparent"><FaGoogle /></button>
+              <button className="text-2xl btn rounded-full border-0 bg-transparent" onClick={signInWithGoogle}><FaGoogle /></button>
               <button className="text-2xl btn rounded-full border-0 bg-transparent"><FaXTwitter /></button>
               <button className="text-2xl btn rounded-full border-0 bg-transparent"><FaTwitch /></button>
               <button className="text-3xl btn rounded-full border-0 bg-transparent"><FaFacebook /></button>

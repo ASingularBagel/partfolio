@@ -20,10 +20,16 @@ function Main() {
     }  
   return (
     <>
-        <MainNavBar />
-        <button className='btn' onClick={handleLogout}>
-            LOG OUT
-        </button>
+        <div className='bg-charcoal-background1 overflow-hidden'>
+            <div className='w-100'>
+                <MainNavBar />
+            </div>
+            
+            <button className='btn' onClick={handleLogout}>
+                LOG OUT
+            </button>
+        </div>
+        
     </>
 
   )
