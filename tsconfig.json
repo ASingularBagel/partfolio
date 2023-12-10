@@ -5,10 +5,12 @@
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
+    "useUnknownInCatchVariables":  false, // important
 
     /* Bundler mode */
-    "moduleResolution": "bundler",
+    "moduleResolution": "node", // Important 
     "allowImportingTsExtensions": true,
+    "allowSyntheticDefaultImports": true, // Important 
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,

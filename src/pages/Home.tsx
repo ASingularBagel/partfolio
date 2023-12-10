@@ -1,5 +1,5 @@
 import React from 'react'
-import CenterPanel from '../assets/mainLoginPanel.js';
+import CenterPanel from '../components/mainHomePanel.js';
 
 function Home() {
   return (

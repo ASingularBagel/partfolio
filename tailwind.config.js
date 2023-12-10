@@ -4,12 +4,17 @@ import daisyui from 'daisyui';
 export default {
   content: ['./src/**/*.{html,js,ts,jsx,tsx}', './index.html'],
   theme: {
-    extend: {},
-  },
-  plugins: [
-    daisyui, 
-    // eslint-disable-next-line no-undef
-    require('@iconify/tailwind')
-  ],
-}
+    extend: {
+      backgroundImage: {
+        'home-background': "url('/src/assets/tenor.gif')",
+      },
+      }
+    },
+    plugins: [
+      daisyui, 
+      // eslint-disable-next-line no-undef
+      require('@iconify/tailwind')
+    ]
+  };
+
 
