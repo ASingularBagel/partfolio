@@ -26,7 +26,10 @@ module.exports = {
       },
       colors: {
         ...theme,
-      }
+      }, 
+      spacing: {
+        'profile': '40px',
+      },
     },
   },
   plugins: [

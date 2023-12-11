@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 //import { getAnalytics } from "firebase/analytics";
-import { getAuth } from "firebase/auth";
+import { User, getAuth, updateProfile } from "firebase/auth";
 import { GoogleAuthProvider } from "firebase/auth";
+import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -21,6 +23,22 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const storage = getStorage(app);
+
 export const provider = new GoogleAuthProvider();
 export { auth };
 // const analytics = getAnalytics(app);
+
+export async function uploadProfilePicture(file: File, path: string, setLoading: (value: boolean) => void, user: User | null) {
+  const fileExtension = file.name.split('.').pop();
+  const storageRef = ref(storage, path +"/"+ user?.uid+ "/" + "profile." +fileExtension);
+
+  setLoading(true);
+
+  const snapshot = await uploadBytes(storageRef, file).catch((error) => {console.log(error)});
+  const photoURL = await getDownloadURL(storageRef);
+
+  if(user)updateProfile(user, {photoURL});
+
+  setLoading(false);
+}
