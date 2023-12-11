@@ -4,8 +4,6 @@ import { auth } from '../firebase/config'
 import { signOut } from 'firebase/auth'
 import { useNavigate } from 'react-router-dom';
 
-import { FaBars } from 'react-icons/fa';
-
 import MainNavBar from '../components/mainNavBar';
 
 function Main() {
@@ -20,16 +18,12 @@ function Main() {
     }  
   return (
     <>
-        <div className='bg-charcoal-background1 overflow-hidden'>
-            <div className='w-100'>
-                <MainNavBar />
-            </div>
-            
+        <div className='bg-charcoal-background1 overflow-hidden h-screen'>
+            <MainNavBar />
             <button className='btn' onClick={handleLogout}>
                 LOG OUT
             </button>
         </div>
-        
     </>
 
   )
