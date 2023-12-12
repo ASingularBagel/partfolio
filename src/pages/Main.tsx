@@ -21,7 +21,7 @@ function Main() {
     }  
   return (
     <>
-        <div className='bg-charcoal-background1 overflow-scroll h-screen'>
+        <div className='bg-charcoal-background1 overflow-hidden h-screen'>
             <MainNavBar />
             <button className='btn' onClick={handleLogout}>
                 LOG OUT

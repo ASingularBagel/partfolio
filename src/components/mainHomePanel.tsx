@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from 'react';
 import { FaGoogle, FaTwitch, FaFacebook } from 'react-icons/fa';
 import { FaXTwitter } from "react-icons/fa6";

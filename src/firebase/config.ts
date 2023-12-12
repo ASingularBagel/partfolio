@@ -26,7 +26,7 @@ const auth = getAuth(app);
 const storage = getStorage(app);
 
 export const provider = new GoogleAuthProvider();
-export { auth };
+export { auth, storage };
 // const analytics = getAnalytics(app);
 
 export async function uploadProfilePicture(file: File, path: string, setLoading: (value: boolean) => void, user: User | null) {
@@ -41,4 +41,14 @@ export async function uploadProfilePicture(file: File, path: string, setLoading:
   if(user)updateProfile(user, {photoURL});
 
   setLoading(false);
+}
+
+
+export async function uploadIllustration(file : File, path : string, setLoading : (value : boolean) => void, user : User | null){
+  const storageRef = ref (storage, path +"/"+ user?.uid+ "/" + file.name)
+
+  setLoading(true);
+
+  const snapshot = await uploadBytes(storageRef, file).catch((error) => {console.log(error)});
+  const newImage = await getDownloadURL(storageRef);
 }
