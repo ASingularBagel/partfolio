@@ -3,11 +3,10 @@ import React from 'react'
 const IsLoading = () => {
   return (
     <>
-      <div className='bg-gray-400 bg-opacity-40 absolute top-0 bottom-0 left-0 right-0 w-20 h-20 border'>
+      <div className='fixed w-20 h-20 border rounded-full flex bg-transparent hero-content justify-center self-center items-center'>
           <span className="loading loading-ring loading-lg"></span>
       </div> 
     </>
-
   )
 }
 

@@ -28,7 +28,7 @@ const storage = getStorage(app);
 const db = getFirestore(app);
 
 export const provider = new GoogleAuthProvider();
-export { auth, storage };
+export { auth, storage, db };
 // const analytics = getAnalytics(app);
 
 export async function updateUserMetadata(user: User | null, role : Array<string>, setLoading: (value: boolean) => void, accountName : string, displayName: string, photo: File | null) {

@@ -12,14 +12,18 @@ import { auth } from '../firebase/config';
 import { provider } from '../firebase/config';
 
 import ErrorAlert from './ErrorAlert';
+import IsLoading from './IsLoading';
 
 const CenterPanel = () => {
     const navigate = useNavigate();
+    const [loading, setLoading] = useState<boolean>(true); 
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [error, setError] = useState<string>('');
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        setLoading(true);
+        {loading && <IsLoading />}
         e.preventDefault();
 
         try{
@@ -28,6 +32,7 @@ const CenterPanel = () => {
         } catch (error) {
            setError(error.message)
         }
+        setLoading(false);
     }
     
     const signInWithGoogle = async () => {

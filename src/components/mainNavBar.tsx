@@ -1,18 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from 'react';
-import { FaSearch } from 'react-icons/fa';
+
 import { FaBars } from 'react-icons/fa';
-import { CiImageOn } from "react-icons/ci";
-import { CgProfile } from "react-icons/cg";
+
 import { IoIosArrowDown, IoMdMailUnread, IoIosNotifications } from "react-icons/io";
 import { IoMail, IoApps } from "react-icons/io5";
 
-import { useFormControl } from '@mui/material/FormControl';
+
 import SearchIcon from '@mui/icons-material/Search';
 import Paper from '@mui/material/Paper';
 import InputBase from '@mui/material/InputBase';
 import Divider from '@mui/material/Divider';
-import Input from '@mui/joy/Input';
+
 
 import ProfilePicture from './profileicon';
 import ProfileDropdown from './profileicondropdown';
@@ -75,23 +74,17 @@ const MainNavBar = () => {
         }
     };
 
-    const [showProfileDropdown, setShowProfileDropdown] = useState(false);
-
-    const handleArrowClick = () => {
-        setShowProfileDropdown(!showProfileDropdown);
-    };
-
   return (
     <>
         <div className="nav-bar-wrapper flex-row flex items-center bg-charcoal-background1 relative top-0 h-16 justify-between z-10">
-            <div className="left-side-pannel flex-row flex items-center justify-start px-4 min-w-fit h-full">
+            <div className="left-side-pannel flex-row flex items-center justify-start px-4 h-full">
                 <div className="drawer">
-                    <input id="my-drawer" type="checkbox" className="drawer-toggle " />
+                    <input id="left-drawer" type="checkbox" className="drawer-toggle " />
                     <div className="drawer-content">
-                        <label htmlFor="my-drawer" className="btn btn-ghost no-animation drawer-button"> <FaBars /></label>
+                        <label htmlFor="left-drawer" className="btn btn-ghost no-animation drawer-button"> <FaBars /></label>
                     </div> 
                     <div className="drawer-side">
-                        <label htmlFor="my-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
+                        <label htmlFor="left-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
                         <ul className="menu p-4 w-80 min-h-full bg-base-200 text-base-content">
                         {/* Sidebar content here */}
                         <li><a>Sidebar Item 1</a></li>
@@ -100,8 +93,8 @@ const MainNavBar = () => {
                         </ul>
                     </div>
                 </div>
-                <div className="logo w-fit px-5 h-full">
-                    <p className='text-charcoal-text1'>NOT A PIXIV CLONE</p>
+                <div className="logo w-full px-10 h-full items-center justify-center flex ">
+                    <p className='text-charcoal-text1' style={{ whiteSpace: 'nowrap' }}>NOT A PIXIV CLONE</p>
                 </div>
             </div>
             <div className="search-bar min-w-100 pl-10 pr-4 h-full flex flex-col align-middle justify-center">
@@ -182,7 +175,7 @@ const MainNavBar = () => {
                     <IoIosNotifications />
                 </div>
                 <div className="profile-dropdown flex items-center text-2xl">
-                    <details className="create-post min-w-20 dropdown dropdown-end" onClick={ () => {
+                    <div className="create-post min-w-20 dropdown dropdown-end" onClick={ () => {
                     handleOverlayClick();
                 }}>
                     <summary tabIndex={0} className="m-1 btn btn-ghost bg-transparent hover:bg-transparent rounded-full no-animation"><p className='w-profile-sm'><ProfilePicture /> </p> <IoIosArrowDown /></summary>
@@ -191,7 +184,7 @@ const MainNavBar = () => {
                             <ProfileDropdown />
                         </div>
                     </div>
-                </details>
+                </div>
                 </div>
                 <div className="apps flex items-center px-4 text-2xl">
                     <IoApps />
