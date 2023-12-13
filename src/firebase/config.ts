@@ -4,7 +4,7 @@ import { initializeApp } from "firebase/app";
 //import { getAnalytics } from "firebase/analytics";
 import { User, getAuth, updateProfile } from "firebase/auth";
 import { GoogleAuthProvider } from "firebase/auth";
-import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
+import { UploadResult, getDownloadURL, getStorage, ref, uploadBytes, getMetadata, updateMetadata } from "firebase/storage";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -30,15 +30,29 @@ export { auth, storage };
 // const analytics = getAnalytics(app);
 
 export async function uploadProfilePicture(file: File, path: string, setLoading: (value: boolean) => void, user: User | null) {
+  // Log the correct file extension 
   const fileExtension = file.name.split('.').pop();
-  const storageRef = ref(storage, path +"/"+ user?.uid+ "/" + "profile." +fileExtension);
+  // Find file ref using naming system and file extension
+  const storageRef = ref(storage, path +"/"+ user?.uid+ "/" + "profile." + fileExtension);
 
   setLoading(true);
 
+  // Upload image to storage
   const snapshot = await uploadBytes(storageRef, file).catch((error) => {console.log(error)});
   const photoURL = await getDownloadURL(storageRef);
 
+  // Update user profile
   if(user)updateProfile(user, {photoURL});
+
+  // Update metadata
+  const metadata = {
+    customMetadata: {
+      username: user?.displayName || "",
+      title: "profile",
+      tag: "profile"
+    }
+  };
+  await updateMetadata(storageRef, metadata);
 
   setLoading(false);
 }
