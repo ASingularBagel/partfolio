@@ -185,7 +185,7 @@ const MainNavBar = () => {
                     <details className="create-post min-w-20 dropdown dropdown-end" onClick={ () => {
                     handleOverlayClick();
                 }}>
-                    <summary tabIndex={0} className="m-1 btn btn-ghost bg-transparent hover:bg-transparent rounded-full no-animation"> <ProfilePicture /> <IoIosArrowDown /></summary>
+                    <summary tabIndex={0} className="m-1 btn btn-ghost bg-transparent hover:bg-transparent rounded-full no-animation"><p className='w-profile-sm'><ProfilePicture /> </p> <IoIosArrowDown /></summary>
                     <div tabIndex={0} className="dropdown-content z-[1] card card-compact w-64 p-2 menu shadow bg-charcoal-surface4 text-white" role='menu'>
                         <div className="card-body">
                             <ProfileDropdown />

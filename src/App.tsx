@@ -5,6 +5,7 @@ import Signup from './pages/Signup'
 import Login from './pages/Login'
 import NotFound from './pages/NotFound'
 import Main from './pages/Main'
+import NewUserInfo from './pages/NewUserInfo'
 
 import { AuthProvider } from './context/auth'
 
@@ -34,6 +35,9 @@ function App() {
         } />
         <Route path="/Main" element={
           <Main />
+        } />
+        <Route path="/NewUserInfo" element={
+          <NewUserInfo />
         } />
         {/*<Route path="/about" element={<About />} />
         <Route path="/:user" element={<User />} />

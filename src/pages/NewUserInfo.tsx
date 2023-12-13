@@ -1,11 +1,9 @@
 import React from 'react'
-import newUserPanel from '../components/newUserPanel'
+import NewUserPanel from '../components/newUserPanel'
 
 function NewUserInfo() {
   return (
-    <>
-        <newUserPanel />
-    </>
+    <NewUserPanel />
   )
 }
 

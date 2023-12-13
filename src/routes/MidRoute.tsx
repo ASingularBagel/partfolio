@@ -7,7 +7,6 @@ interface MidRouteProps {
 }
 const MidRoute : FC<MidRouteProps> = ({ children }) => {
     const { user } = useAuth();
-    console.log(user);
     if ( user ) {
         return (
             <Navigate to="/Main" replace ={true} />

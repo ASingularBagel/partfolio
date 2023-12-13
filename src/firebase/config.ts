@@ -4,7 +4,8 @@ import { initializeApp } from "firebase/app";
 //import { getAnalytics } from "firebase/analytics";
 import { User, getAuth, updateProfile } from "firebase/auth";
 import { GoogleAuthProvider } from "firebase/auth";
-import { UploadResult, getDownloadURL, getStorage, ref, uploadBytes, getMetadata, updateMetadata } from "firebase/storage";
+import { UploadResult, getDownloadURL, getStorage, ref, uploadBytes, updateMetadata } from "firebase/storage";
+import { getFirestore, doc, setDoc } from "firebase/firestore";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -24,18 +25,44 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const storage = getStorage(app);
+const db = getFirestore(app);
 
 export const provider = new GoogleAuthProvider();
 export { auth, storage };
 // const analytics = getAnalytics(app);
 
+export async function updateUserMetadata(user: User | null, role : Array<string>, setLoading: (value: boolean) => void, accountName : string, displayName: string, photo: File | null) {
+  setLoading(true);
+  if (user) {
+    // Get Firestore reference for user document
+    const userRef = doc(db, "users", user.uid);
+    const rolesMetadata = role.map((r) => ({ role: r }));
+    
+    // Update user profile
+    if (photo) {
+      await uploadProfilePicture(photo, "profile-photos", setLoading, user);
+    }
+  
+    await setDoc(userRef, {
+      uid: user.uid,
+      displayName: displayName ? displayName : user.uid,
+      photoURL: photo ? user.photoURL : null,
+      accountName: accountName ? "@" + accountName : "@" + user.uid,
+      roles: rolesMetadata,
+    }).catch((error) => {console.log(error)});
+
+    // Finally, update user info in Firebase Auth
+    await updateProfile(user, { displayName }).catch((error) => {console.log(error)});
+  }
+  setLoading(false);
+}
+
 export async function uploadProfilePicture(file: File, path: string, setLoading: (value: boolean) => void, user: User | null) {
+  setLoading(true);
   // Log the correct file extension 
   const fileExtension = file.name.split('.').pop();
   // Find file ref using naming system and file extension
   const storageRef = ref(storage, path +"/"+ user?.uid+ "/" + "profile." + fileExtension);
-
-  setLoading(true);
 
   // Upload image to storage
   const snapshot = await uploadBytes(storageRef, file).catch((error) => {console.log(error)});

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { createUserWithEmailAndPassword, signInWithRedirect } from 'firebase/auth';
+import { User, createUserWithEmailAndPassword, getRedirectResult, signInWithRedirect } from 'firebase/auth';
 import React, { useState, useEffect } from 'react';
 import { FaGoogle, FaTwitch, FaFacebook } from 'react-icons/fa';
 import { FaXTwitter } from "react-icons/fa6";
@@ -24,16 +24,19 @@ const CenterPanel = () => {
 
         try {
             await createUserWithEmailAndPassword(auth, email, password);
-            navigate('/Main');
+            navigate('/NewUserInfo');
         } catch (error) {
             setError(error.message);
         }
     }
 
-    const signInWithGoogle = async () => {
+    const signInWithGoogle = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         try {
             await signInWithRedirect(auth, provider);
-            navigate('/Main');
+            getRedirectResult(auth).then((result) => {
+                navigate('/NewUserInfo', { state: { displayName: result?.user.displayName, photo: result?.user.photoURL } });
+            });
+            
         } catch (error) {
             setError(error.message)
         }
