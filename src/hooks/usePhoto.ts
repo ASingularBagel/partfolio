@@ -29,5 +29,5 @@ export function usePhoto() {
         }
     }, [user])
 
-  return { user, photo, handleChange, handleUpload, photoUrl, isUploading: setIsUploading };
+  return { user, photo, handleChange, handleUpload, photoUrl, isUploading: setIsUploading, isLoading : isUploading };
 }

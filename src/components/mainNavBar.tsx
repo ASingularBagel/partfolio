@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 
 import { FaBars } from 'react-icons/fa';
 
-import { IoIosArrowDown, IoMdMailUnread, IoIosNotifications } from "react-icons/io";
+import { IoIosNotifications } from "react-icons/io";
 import { IoMail, IoApps } from "react-icons/io5";
 
 
@@ -13,11 +13,10 @@ import InputBase from '@mui/material/InputBase';
 import Divider from '@mui/material/Divider';
 
 
-import ProfilePicture from './profileicon';
+
 import ProfileDropdown from './profileicondropdown';
 import PostYourWork from './postYourWork';
-import { Menu, Transition } from '@headlessui/react'
-import { Fragment, SVGProps } from 'react'
+
 
 const MainNavBar = () => {
     const displaySearchBar = () => {

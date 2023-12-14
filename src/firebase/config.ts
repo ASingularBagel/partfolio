@@ -71,6 +71,11 @@ export async function updateUserMetadata(user: User | null, role: Array<string>,
     await updateProfile(user, { displayName }).catch((error) => {
       console.log(error);
     });
+    const dummyFile = new Blob(['dummy content'], { type: 'text/plain' });
+    const storageRef = ref(storage, `user-illustration/${user?.uid}/dummy.txt`);
+    const storageRef2 = ref(storage, `background-photos/${user?.uid}/dummy.txt`);
+    uploadBytes(storageRef, dummyFile).then(() => {console.log('Dummy file 1 uploaded');}).catch((error) => {console.log(error);});
+    uploadBytes(storageRef2, dummyFile).then(() => {console.log('Dummy file 2 uploaded');}).catch((error) => {console.log(error);});
   }
   setLoading(false);
 }
@@ -103,11 +108,33 @@ export async function uploadProfilePicture(file: File, path: string, setLoading:
 }
 
 
-export async function uploadIllustration(file : File, path : string, setLoading : (value : boolean) => void, user : User | null){
-  const storageRef = ref (storage, path +"/"+ user?.uid+ "/" + file.name)
-
+export async function uploadIllustration(file : File, path : string, title: string, tags : Array<string>, setLoading : (value : boolean) => void, user : User | null){
   setLoading(true);
+  // Upload image to storage 
+  const storageRef = ref (storage, "user-illustration/"+ user?.uid+ "/" + file.name)
 
   const snapshot = await uploadBytes(storageRef, file).catch((error) => {console.log(error)});
   const newImage = await getDownloadURL(storageRef);
+
+  // Update metadata
+  const metadata = {
+    customMetadata: {
+      username: user?.displayName || "",
+      title: title,
+      tag: tags.join(" ")
+    }
+  };
+
+  await updateMetadata(storageRef, metadata);
+
+  // Update database
+  const docRef = dbref(rtdb, `users/${user?.uid}/${file.name}/posts/${title}`);
+  await set(docRef, {
+    title: title,
+    tags: tags,
+    image: newImage,
+  }).catch((error) => {
+    console.log(error);
+  });
+  setLoading(false);
 }

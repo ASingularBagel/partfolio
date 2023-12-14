@@ -6,19 +6,23 @@ import { FaXTwitter } from "react-icons/fa6";
 import { useNavigate } from 'react-router-dom';
 import { auth, provider } from '../firebase/config';
 import ErrorAlert from './ErrorAlert';
+import IsLoading from './IsLoading';
 
 const CenterPanel = () => {
     const navigate = useNavigate();
+    const [loading, setLoading] = useState<boolean>(false); 
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [confirmPassword, setConfirmPassword] = useState<string>('');
     const [error, setError] = useState<string>('');
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        setLoading(true);
         e.preventDefault();
 
         if (password !== confirmPassword) {
             setError('Passwords do not match');
+            setLoading(false);
             return;
         }
 
@@ -28,6 +32,7 @@ const CenterPanel = () => {
         } catch (error) {
             setError(error.message);
         }
+        setLoading(false);
     }
 
     const signInWithGoogle = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -92,6 +97,7 @@ const CenterPanel = () => {
                     </div>
                 </div>
             </form>
+            {loading? <IsLoading /> : null}
             <button onClick={() => navigate('/')} className='btn bg-transparent top-3 right-3 absolute'>Go Back</button>
         </>
     );

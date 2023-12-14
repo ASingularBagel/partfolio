@@ -16,14 +16,13 @@ import IsLoading from './IsLoading';
 
 const CenterPanel = () => {
     const navigate = useNavigate();
-    const [loading, setLoading] = useState<boolean>(true); 
+    const [loading, setLoading] = useState<boolean>(false); 
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [error, setError] = useState<string>('');
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         setLoading(true);
-        {loading && <IsLoading />}
         e.preventDefault();
 
         try{
@@ -87,6 +86,7 @@ const CenterPanel = () => {
                     </div>
                 </div>
             </form>
+            {loading && <IsLoading />}
             <button onClick={() => navigate('/')} className='btn bg-transparent top-3 right-3 absolute'>Go Back</button>
         </>
     );

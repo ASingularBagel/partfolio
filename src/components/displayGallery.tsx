@@ -3,7 +3,6 @@ import React, { useState } from 'react'
 import { useAuth } from '../hooks/useAuth'
 import { storage } from '../firebase/config'
 import { FirebaseStorage, ref, listAll, getDownloadURL, list, StorageReference } from 'firebase/storage';
-import { get } from 'http';
 
 const useDisplayGallery = (path: string, listAllBoolean: (value: boolean) => false, amount: number) => {
     const [listRef, setListRef] = useState<[FirebaseStorage, string | null]>([storage, null]);

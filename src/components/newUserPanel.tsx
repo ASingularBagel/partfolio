@@ -9,6 +9,7 @@ import ProfilePicture from './profileicon';
 
 import InfoAlert from './InfoAlert';
 import ErrorAlert from './ErrorAlert';
+import IsLoading from './IsLoading';
 
 import { updateUserMetadata } from '../firebase/config';
 
@@ -26,7 +27,7 @@ const NewUserPanel = () => {
   const [noAccountName, setNoAccountName] = useState<boolean>(true);
   const [noProfilePicture, setNoProfilePicture] = useState<boolean>(true);
 
-  const { photo, photoUrl, handleChange, handleUpload, isUploading } = usePhoto();
+  const { photo, photoUrl, handleChange, handleUpload, isUploading, isLoading } = usePhoto();
 
   const [showAlert, setShowAlert] = useState<boolean>(false);
   const [alertText, setAlertText] = useState('');
@@ -117,6 +118,7 @@ const NewUserPanel = () => {
                   
               </div>
           </div>
+          {isLoading? <IsLoading /> : null}
       </form>
     )
   
