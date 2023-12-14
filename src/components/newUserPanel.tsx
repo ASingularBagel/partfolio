@@ -6,6 +6,7 @@ import { useAuth } from '../hooks/useAuth';
 import { usePhoto } from '../hooks/usePhoto';
 
 import ProfilePicture from './profileicon';
+
 import InfoAlert from './InfoAlert';
 import ErrorAlert from './ErrorAlert';
 

@@ -11,8 +11,8 @@ function ProfilePicture() {
     const { photoUrl } = usePhoto();
   return (
     <>
-        <div className='items-center flex justify-center rounded-[50%] overflow-hidden border-2 border-gray-300 border-solid'>
-            <p className=''>
+        <div className='items-center flex justify-center rounded-[50%] overflow-hidden'>
+            <p className='contain'>
                 <img className='bg-cover object-scale-down overflow-hidden' src={photoUrl} alt="avatar" />
             </p>
         </div>

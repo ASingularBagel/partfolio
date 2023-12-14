@@ -3,6 +3,7 @@
 import { useState, ChangeEvent, useEffect } from 'react';
 import { useAuth } from './useAuth';
 import { uploadProfilePicture } from '../firebase/config';
+import { set } from 'firebase/database';
 
 export function usePhoto() {
     const { user } = useAuth();

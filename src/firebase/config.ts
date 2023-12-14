@@ -6,6 +6,7 @@ import { User, getAuth, updateProfile } from "firebase/auth";
 import { GoogleAuthProvider } from "firebase/auth";
 import { UploadResult, getDownloadURL, getStorage, ref, uploadBytes, updateMetadata } from "firebase/storage";
 import { getFirestore, doc, setDoc } from "firebase/firestore";
+import { getDatabase,  ref as dbref, set  } from "firebase/database";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -26,33 +27,50 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const storage = getStorage(app);
 const db = getFirestore(app);
+const rtdb = getDatabase(app);
 
 export const provider = new GoogleAuthProvider();
-export { auth, storage, db };
+export { auth, storage, db, rtdb };
 // const analytics = getAnalytics(app);
 
-export async function updateUserMetadata(user: User | null, role : Array<string>, setLoading: (value: boolean) => void, accountName : string, displayName: string, photo: File | null) {
+export async function updateUserMetadata(user: User | null, role: Array<string>, setLoading: (value: boolean) => void, accountName: string, displayName: string, photo: File | null) {
   setLoading(true);
   if (user) {
-    // Get Firestore reference for user document
-    const userRef = doc(db, "users", user.uid);
+    // Get Realtime Database reference for user document
+    const userRef = dbref(rtdb, "users/" + user.uid);
     const rolesMetadata = role.map((r) => ({ role: r }));
-    
+
     // Update user profile
     if (photo) {
       await uploadProfilePicture(photo, "profile-photos", setLoading, user);
     }
-  
-    await setDoc(userRef, {
+
+    await set(userRef, {
       uid: user.uid,
       displayName: displayName ? displayName : user.uid,
       photoURL: photo ? user.photoURL : null,
+      backgroundURL: "",
       accountName: accountName ? "@" + accountName : "@" + user.uid,
       roles: rolesMetadata,
-    }).catch((error) => {console.log(error)});
+      followers: [""],
+      following: [""],
+      projects: [""],
+      likedProjects: [""],
+      likedPosts: [""],
+      likedComments: [""],
+      comments: [""],
+      posts: [""],
+      notifications: [""],
+      messages: [""],
+      chats: [""],
+    }).catch((error : Error) => {
+      console.log(error);
+    });
 
     // Finally, update user info in Firebase Auth
-    await updateProfile(user, { displayName }).catch((error) => {console.log(error)});
+    await updateProfile(user, { displayName }).catch((error) => {
+      console.log(error);
+    });
   }
   setLoading(false);
 }

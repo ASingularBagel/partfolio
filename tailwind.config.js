@@ -29,6 +29,7 @@ module.exports = {
       }, 
       spacing: {
         'profile-sm': '40px',
+        'profile-sm-2': '60px',
         'profile-md': '80px',
         'profile-lg': '120px',
       },

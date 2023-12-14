@@ -15,6 +15,9 @@ import Divider from '@mui/material/Divider';
 
 import ProfilePicture from './profileicon';
 import ProfileDropdown from './profileicondropdown';
+import PostYourWork from './postYourWork';
+import { Menu, Transition } from '@headlessui/react'
+import { Fragment, SVGProps } from 'react'
 
 const MainNavBar = () => {
     const displaySearchBar = () => {
@@ -137,54 +140,17 @@ const MainNavBar = () => {
                 </div>
             </div>
             <div className='right-pannel flex flex-row justify-between min-w-fit'> 
-                <details className="create-post min-w-20 dropdown dropdown-bottom" onClick={ () => {
-                    handleOverlayClick();
-                }}>
-                    <summary tabIndex={0} className="m-1 btn btn-md px-6 rounded-full bg-charcoal-surface3 hover:bg-charcoal-surface3-hover color:text1"><p className='text-charcoal-text1 font-sans-serif'>Post your work</p> <IoIosArrowDown /></summary>
-                    <div tabIndex={0} className="dropdown-content z-[1] card card-compact w-64 p-2 menu shadow bg-charcoal-surface4 text-white" role='menu'>
-                        <div className="card-body divide-y">
-                            <ul className=''>
-                                <div className='py-1 w-100 hover:bg-charcoal-background2-hover flex flex-col' role='none'>
-                                    <li className='px-4 py-2 text-sm' role='menuitem'>Illustrations</li>
-                                </div>
-                                <div className='py-1 w-100 hover:bg-charcoal-background2-hover' role='none'>
-                                    <li className='px-4 py-2 text-sm' role='menuitem'>Ugoira</li>
-                                </div>
-                                <div className='py-1 w-100 hover:bg-charcoal-background2-hover' role='none'>
-                                    <li className='px-4 py-2 text-sm' role='menuitem'>Manga</li>
-                                </div>
-                                <div className='py-1 w-100 hover:bg-charcoal-background2-hover' role='none'>
-                                    <li className='px-4 py-2 text-sm' role='menuitem'>Novels</li>
-                                </div>
-                            </ul>
-                            <ul>
-                                <div className='py-1 w-100 hover:bg-charcoal-background2-hover' role='none'>
-                                    <li className='px-4 py-2 text-sm' role='menuitem'>Sketch</li>
-                                </div>
-                                <div className='py-1 w-100 hover:bg-charcoal-background2-hover' role='none'>
-                                    <li className='px-4 py-2 text-sm' role='menuitem'>Start a Live Stream</li>
-                                </div>
-                            </ul>
-                        </div>
-                    </div>
-                </details>
+                <div className="relative mr-10 inline-block w-fit" onClick={handleOverlayClick}>
+                    <PostYourWork />
+                </div>
                 <div className="mail flex flex-row items-center px-4 text-2xl">
                     <IoMail />
                 </div>
                 <div className='Notifications flex items-center px-4 text-2xl'>
                     <IoIosNotifications />
                 </div>
-                <div className="profile-dropdown flex items-center text-2xl">
-                    <div className="create-post min-w-20 dropdown dropdown-end" onClick={ () => {
-                    handleOverlayClick();
-                }}>
-                    <summary tabIndex={0} className="m-1 btn btn-ghost bg-transparent hover:bg-transparent rounded-full no-animation"><p className='w-profile-sm'><ProfilePicture /> </p> <IoIosArrowDown /></summary>
-                    <div tabIndex={0} className="dropdown-content z-[1] card card-compact w-64 p-2 menu shadow bg-charcoal-surface4 text-white" role='menu'>
-                        <div className="card-body">
-                            <ProfileDropdown />
-                        </div>
-                    </div>
-                </div>
+                <div className='profile-drop-down-container' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                    <ProfileDropdown />
                 </div>
                 <div className="apps flex items-center px-4 text-2xl">
                     <IoApps />
