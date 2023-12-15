@@ -1,12 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 //import { getAnalytics } from "firebase/analytics";
 import { User, getAuth, updateProfile } from "firebase/auth";
 import { GoogleAuthProvider } from "firebase/auth";
-import { UploadResult, getDownloadURL, getStorage, ref, uploadBytes, updateMetadata } from "firebase/storage";
+import { UploadResult, getDownloadURL, getStorage, ref, uploadBytes, updateMetadata, deleteObject } from "firebase/storage";
 import { getFirestore, doc, setDoc } from "firebase/firestore";
-import { getDatabase,  ref as dbref, set  } from "firebase/database";
+import { getDatabase,  ref as dbref, set, onValue, push, get, ThenableReference  } from "firebase/database";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -29,8 +30,10 @@ const storage = getStorage(app);
 const db = getFirestore(app);
 const rtdb = getDatabase(app);
 
+let operationsToRollback: { databaseWrites: Array<{ ref: ThenableReference }>, storageUploads : Array<any> } = { databaseWrites: [], storageUploads: [] };
+
 export const provider = new GoogleAuthProvider();
-export { auth, storage, db, rtdb };
+export { auth, storage, db, rtdb, dbref, operationsToRollback };
 // const analytics = getAnalytics(app);
 
 export async function updateUserMetadata(user: User | null, role: Array<string>, setLoading: (value: boolean) => void, accountName: string, displayName: string, photo: File | null) {
@@ -108,10 +111,14 @@ export async function uploadProfilePicture(file: File, path: string, setLoading:
 }
 
 
-export async function uploadIllustration(file : File, path : string, title: string, tags : Array<string>, setLoading : (value : boolean) => void, user : User | null){
+export async function uploadIllustration(file : File, title: string, tags : Array<string>, setLoading : (value : boolean) => void, user : User | null){
   setLoading(true);
-  // Upload image to storage 
-  const storageRef = ref (storage, "user-illustration/"+ user?.uid+ "/" + file.name)
+  // Generate a random ID
+  const id = Math.floor((Math.random() * 100000) + 1).toString();
+
+  // Upload image to storage
+  const storageRef = ref(storage, `user-illustration/${user?.uid}/${id}`);
+
 
   const snapshot = await uploadBytes(storageRef, file).catch((error) => {console.log(error)});
   const newImage = await getDownloadURL(storageRef);
@@ -121,6 +128,7 @@ export async function uploadIllustration(file : File, path : string, title: stri
     customMetadata: {
       username: user?.displayName || "",
       title: title,
+      id : id,
       tag: tags.join(" ")
     }
   };
@@ -128,7 +136,7 @@ export async function uploadIllustration(file : File, path : string, title: stri
   await updateMetadata(storageRef, metadata);
 
   // Update database
-  const docRef = dbref(rtdb, `users/${user?.uid}/${file.name}/posts/${title}`);
+  const docRef = dbref(rtdb, `users/${user?.uid}/posts/${id}`);
   await set(docRef, {
     title: title,
     tags: tags,
@@ -136,5 +144,126 @@ export async function uploadIllustration(file : File, path : string, title: stri
   }).catch((error) => {
     console.log(error);
   });
+  setLoading(false);
+}
+
+export async function fetchIllustration(setLoading: (value: boolean) => void, user: User | null, id: string, setData : (value : any) => void) {
+  setLoading(true);
+  const docRef = dbref(rtdb, `users/${user?.uid}/posts/${id}`);
+  onValue(docRef, (snapshot) => {
+    const data = snapshot.val();
+    if (data) {
+      setData(data);
+      return data;
+    }
+  });
+  setLoading(false);
+}
+
+export async function uploadPost(title: string, tags: Array<string>, user: User, setLoading: (value: boolean) => void) {
+  setLoading(true);
+
+  const postRef = dbref(rtdb, `users/${user.uid}/posts`);
+  const newPostRef = push(postRef); // Creates a new ref with a unique push ID
+
+  await set(newPostRef, {
+    title: title,
+    tags: tags,
+    images: [],
+    thumbnail: "",
+  }).catch((error) => {
+    console.log(error);
+    return; // Exit the function early if the write fails
+  });
+
+  // Record the operation for a possible rollback
+  operationsToRollback.databaseWrites.push({
+    ref: newPostRef,
+  });
+
+  setLoading(false);
+  return newPostRef.key; // This is the ID of the new post
+}
+
+export async function uploadIllustrationsToPost(postId: string, files: File[], user: User, setLoading: (value: boolean) => void) {
+  setLoading(true);
+  const postRef = dbref(rtdb, `users/${user.uid}/posts/${postId}`);
+  const postSnapshot = await get(postRef);
+
+  if (!postSnapshot.exists()) {
+    console.log("Post does not exist!");
+    setLoading(false);
+    return;
+  }
+
+  const postData = postSnapshot.val();
+  const imagesArray = postData.images || [];
+
+  // Map each file to an upload promise but don't await here
+  const uploadPromises = files.map((file) => {
+    const imageStorageRef = ref(storage, `user-illustration/${user.uid}/${postId}/${file.name}`);
+    return uploadBytes(imageStorageRef, file)
+      .then(() => {
+        // Record successful storage upload
+        operationsToRollback.storageUploads.push({
+          path: imageStorageRef.fullPath,
+        });
+        return getDownloadURL(imageStorageRef);
+      })
+      .then((url) => imagesArray.push(url))
+      .catch((error) => {
+        console.log(error);
+        throw new Error('Upload failed for file: ' + file.name); // Rethrow to catch in Promise.all
+      });
+  });
+
+  try {
+    await Promise.all(uploadPromises);
+  } catch (error) {
+    console.error('One or more file uploads failed:', error);
+
+    await rollbackChanges(operationsToRollback, setLoading);
+    setLoading(false);
+    return; // Exit the function early if any upload fails
+  }
+
+   // Once all files are uploaded, update the Realtime Database post entry
+   await set(postRef, { ...postData, images: imagesArray, thumbnail: imagesArray[0] }).catch((error) => {
+    console.log(error);
+    setLoading(false);
+    return;
+  });
+
+  setLoading(false);
+}
+
+export async function rollbackChanges(operations : any, setLoading: (value: boolean) => void) {
+  setLoading(true);
+
+  const storageInstance = getStorage();
+  const rollbacks = [];
+
+  // Rollback storage uploads
+  for (const uploadOp of operations.storageUploads) {
+    const deleteRef = ref(storageInstance, uploadOp.path);
+    rollbacks.push(deleteObject(deleteRef).catch((error) => {
+      console.error('Failed to delete storage object:', error);
+    }));
+  }
+
+  // Rollback database writes
+  for (const writeOp of operationsToRollback.databaseWrites) {
+    await set(writeOp.ref, null).catch((error) => {
+      console.error('Failed to rollback database write: ', error);
+    });
+  }
+
+  // Clear the recorded operations after rollback
+  operationsToRollback = {
+    databaseWrites: [],
+    storageUploads: []
+  };
+
+  await Promise.all(rollbacks);
   setLoading(false);
 }

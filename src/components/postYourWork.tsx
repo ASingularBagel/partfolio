@@ -1,8 +1,15 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Menu, Transition } from '@headlessui/react'
 import React from 'react'
-import { Fragment} from 'react'
+import { Fragment } from 'react'
+import { useNavigate } from 'react-router-dom'
+import {useAuth} from '../hooks/useAuth'
+import { useAccountName } from '../hooks/useAccountName'
 
 export const PostYourWork = () => {
+    const { user } = useAuth();
+    const { accountName } = useAccountName();
+    const navigate = useNavigate();
   return (
     <Menu as="div">
                         <Menu.Button className="flex items-center justify-center h-full ">
@@ -26,6 +33,7 @@ export const PostYourWork = () => {
                                                 className={`${
                                                     active ? 'bg-charcoal-surface2-hover text-white' : 'text-white ' 
                                                 } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                                                onClick={() => navigate(`/${accountName}/uploadillustration`)}
                                             >
                                                 Illustration
                                             </button>

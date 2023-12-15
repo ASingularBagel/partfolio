@@ -1,6 +1,7 @@
 import React, { FC, createContext } from "react";
 import { User, onAuthStateChanged } from 'firebase/auth';
 import { auth } from "../firebase/config";
+import IsLoading from "../components/IsLoading";
 
 interface AuthContextType{
     user : User | null,
@@ -27,6 +28,10 @@ export const AuthProvider : FC<AuthProviderProps> = ({ children }) => {
 
         return unsubscribe;
     }, []);
+
+    if (isLoading) {
+        return <IsLoading />;
+      }
 
     const value = {
         user, 
