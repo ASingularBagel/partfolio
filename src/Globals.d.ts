@@ -1,1 +1,0 @@
-declare module "*.dark-theme.module.css";
