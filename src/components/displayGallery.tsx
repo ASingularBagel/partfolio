@@ -41,7 +41,7 @@ const useDisplayGallery = (path: string, listAllBoolean: (value: boolean) => fal
         
     };
 
-    function processItems(items: StorageReference[]): Promise<string[]> {
+    async function processItems(items: StorageReference[]): Promise<string[]> {
         const urls: string[] = [];
 
         const promises = items.map((item) =>
@@ -50,7 +50,8 @@ const useDisplayGallery = (path: string, listAllBoolean: (value: boolean) => fal
             })
         );
 
-        return Promise.all(promises).then(() => urls);
+        await Promise.all(promises);
+        return urls;
     }
 
     // TODO : Handle call to refresh display

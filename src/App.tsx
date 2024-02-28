@@ -22,9 +22,9 @@ import IsLoading from './components/IsLoading'
 function App() {
   const { user } = useAuth();
   const { accountName } = useAccountName();
-  if(accountName === null || user === null) {
-    return <IsLoading />
-    }
+  // if(accountName === null || user === null) {
+  //   return <IsLoading />
+  //   }
   return (
     <AuthProvider>
       <Routes>
